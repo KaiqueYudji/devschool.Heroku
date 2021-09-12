@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get('/matricula', async (req,resp) =>{
     try{
-         let consulta = await db.tb_matricula.findAll()
+         let consulta = await db.tb_matricula.findAll({ order: [['id_matricula', 'desc']] });
          resp.send(consulta)
     }catch(e){
         resp.send(e)
@@ -32,6 +32,9 @@ app.post('/matricula', async (req,resp) =>{
         nm_curso: nomecurso,
         nm_turma: nmturma
     }
+
+   if(nomealuno == '' || nrchamada == ''  || nomecurso == '' || nmturma == '' )
+   return resp.send("os campos são obrigatórios")
   
     let msmusu = await db.tb_matricula.findOne({
         where:{nm_aluno:nomealuno}
@@ -39,6 +42,19 @@ app.post('/matricula', async (req,resp) =>{
 
     if(msmusu != null)
     return resp.send("Usuário já existe")
+   
+
+    let msmchamada = await db.tb_matricula.findOne({
+        where:{nr_chamada:nrchamada, nm_turma:nmturma}
+    })
+
+
+    if(msmchamada != null)
+    return resp.send("Usuário já existe")
+
+    if(nrchamada < 0 )
+     return resp.send('Número inválido')
+
 
     let resposta = await db.tb_matricula.create(adicionar);
     resp.send(resposta) 
