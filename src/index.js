@@ -89,6 +89,9 @@ app.put('/matricula/:id', async (req,resp) =>{
     if(msmusu != null)
     return resp.send({erro:"Usuário já existe"})
 
+    if(nrchamada < 0 )
+    return resp.send({erro:'Número inválido'})
+
     let alterar = await db.tb_matricula.update({
         nm_aluno:nomealuno,
         nr_chamada:nrchamada,
