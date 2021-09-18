@@ -34,14 +34,17 @@ app.post('/matricula', async (req,resp) =>{
     }
 
    if(nomealuno == '' || nrchamada == ''  || nomecurso == '' || nmturma == '' )
-   return resp.send("os campos são obrigatórios")
+   return resp.send({erro:"os campos são obrigatórios"})
   
+   if(isNaN(nrchamada))
+    return resp.send({erro:"O Campo Chamado só aceita números"})
+
     let msmusu = await db.tb_matricula.findOne({
         where:{nm_aluno:nomealuno}
     })
 
     if(msmusu != null)
-    return resp.send("Usuário já existe")
+    return resp.send({erro:"Usuário já existe"})
    
 
     let msmchamada = await db.tb_matricula.findOne({
@@ -50,10 +53,10 @@ app.post('/matricula', async (req,resp) =>{
 
 
     if(msmchamada != null)
-    return resp.send("Usuário já existe")
+    return resp.send({erro:"Usuário já existe"})
 
     if(nrchamada < 0 )
-     return resp.send('Número inválido')
+     return resp.send({erro:'Número inválido'})
 
 
     let resposta = await db.tb_matricula.create(adicionar);
@@ -71,6 +74,20 @@ app.put('/matricula/:id', async (req,resp) =>{
     let nrchamada = req.body.nr_chamada;
     let nomecurso = req.body.nm_curso;
     let nmturma = req.body.nm_turma;
+
+    
+   if(nomealuno == '' || nrchamada == ''  || nomecurso == '' || nmturma == '' )
+   return resp.send({erro:"os campos são obrigatórios"})
+  
+   if(isNaN(nrchamada))
+    return resp.send({erro:"O Campo Chamado só aceita números"})
+
+    let msmusu = await db.tb_matricula.findOne({
+        where:{nm_aluno:nomealuno}
+    })
+
+    if(msmusu != null)
+    return resp.send({erro:"Usuário já existe"})
 
     let alterar = await db.tb_matricula.update({
         nm_aluno:nomealuno,
